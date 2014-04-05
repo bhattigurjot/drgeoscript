@@ -29,14 +29,10 @@ fi
 
 compile()
 {
-	aclocal
-	autoheader
-	autoreconf -i
-	automake -a
-	libtoolize -f
+	libtoolize
+	autoreconf -vfi
 	intltoolize --force
-	autoconf
-	autoheader
+	aclocal
 	./configure --prefix=/usr
 	set -e
 	make
