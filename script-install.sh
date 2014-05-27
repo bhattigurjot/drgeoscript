@@ -30,10 +30,11 @@ fi
 compile()
 {
 	libtoolize
+	gettextize -f
 	autoreconf -vfi
 	intltoolize --force
-	aclocal
-	./configure --prefix=/usr
+	aclocal -I /usr/local/share/aclocal
+	./configure --includedir=/usr/local/include/guile/2.0/
 	set -e
 	make
 	set +e
@@ -62,8 +63,9 @@ if  [ "$result" = "$1" ]; then
 
 check_wget()
 {
-result=$(dpkg-query -W -f='${package}\n' "$1")
-if  [ "$result" = "$1" ]; then
+result=$(guile -v 2>&1 | head -n 1)
+exp='guile (GNU Guile) 2.0.11'
+if  [ "$result" = "$exp" ]; then
 		echo "$1 already installed"
 	else
 		echo "$1 is not installed in your system"
@@ -77,8 +79,8 @@ if  [ "$result" = "$1" ]; then
 			else
 				cd tmp
 			fi
-				wget -c http://mirror.fsf.org/trisquel/pool/main/g/guile-1.6/guile-1.6-dev_1.6.8-10ubuntu4_$arch.deb http://mirror.fsf.org/trisquel/pool/main/g/guile-1.6/guile-1.6-libs_1.6.8-10ubuntu4_$arch.deb http://mirror.fsf.org/trisquel/pool/main/g/guile-1.6/guile-1.6_1.6.8-10ubuntu4_$arch.deb http://mirror.fsf.org/trisquel/pool/main/g/guile-1.6/libguile-ltdl-1_1.6.8-10ubuntu4_$arch.deb
-				sudo dpkg -i libguile-ltdl-1_1.6.8-10ubuntu4_$arch.deb guile-1.6_1.6.8-10ubuntu4_$arch.deb guile-1.6-libs_1.6.8-10ubuntu4_$arch.deb guile-1.6-dev_1.6.8-10ubuntu4_$arch.deb
+				wget -c http://ftp.us.debian.org/debian/pool/main/libg/libgc/libgc1c2_7.2d-6_$arch.deb http://ftp.us.debian.org/debian/pool/main/g/guile-2.0/guile-2.0-libs_2.0.11+1-1_$arch.deb http://ftp.us.debian.org/debian/pool/main/g/guile-2.0/guile-2.0_2.0.11+1-1_$arch.deb
+				sudo dpkg -i libgc1c2_7.2d-6_$arch.deb guile-2.0-libs_2.0.11+1-1_$arch.deb guile-2.0_2.0.11+1-1_$arch.deb
 
 				cd ..
 				
@@ -92,7 +94,7 @@ if  [ "$result" = "$1" ]; then
 Dependencies()
 {
 dep=(automake autoconf libc-dev libtinfo-dev libncurses5-dev libreadline6-dev libgtk2.0-0 libgtk2.0-0-dbg libgtk2.0-dev libglade2-0 libglade2-dev libxml2-dev intltool libtool gnutls-bin binutils binutils-dev)
-dep2=(guile-1.6)
+dep2=(guile-2.0.11)
 for i in "${dep[@]}"
 	do
 		check_apt $i
