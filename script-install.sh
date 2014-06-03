@@ -29,11 +29,12 @@ fi
 
 compile()
 {
+	sudo cp /usr/local/share/aclocal/guile.m4 m4/
 	libtoolize
 	gettextize -f
 	autoreconf -vfi
 	intltoolize --force
-	aclocal -I /usr/local/share/aclocal
+	aclocal
 	./configure --includedir=/usr/local/include/guile/2.0/
 	set -e
 	make
@@ -73,17 +74,21 @@ if  [ "$result" = "$exp" ]; then
 			 "otherwise to abort):"
 		read Y
 		if [ $Y = y ] || [ $Y = Y ]; then
-			if [ ! -d "tmp" ]; then
-				mkdir tmp
-				cd tmp
-			else
-				cd tmp
-			fi
-				wget -c http://ftp.us.debian.org/debian/pool/main/libg/libgc/libgc1c2_7.2d-6_$arch.deb http://ftp.us.debian.org/debian/pool/main/g/guile-2.0/guile-2.0-libs_2.0.11+1-1_$arch.deb http://ftp.us.debian.org/debian/pool/main/g/guile-2.0/guile-2.0_2.0.11+1-1_$arch.deb
-				sudo dpkg -i libgc1c2_7.2d-6_$arch.deb guile-2.0-libs_2.0.11+1-1_$arch.deb guile-2.0_2.0.11+1-1_$arch.deb
-
-				cd ..
-				
+			mydir=`pwd`
+			cd
+			sudo apt-get build-dep guile-2.0
+			wget -c ftp://ftp.gnu.org/gnu/guile/guile-2.0.11.tar.gz
+			tar -zxvf guile-2.0.11.tar.gz
+			cd guile-2.0.11
+			./configure
+			set -e
+			make
+			set +e			
+			sudo make install 
+			sudo ldconfig
+			cd
+			cd $mydir
+					
 		else 
 			echo "Aborted" 
 			exit
@@ -114,8 +119,6 @@ echo "#            ---Begin Compilation---                 #"
 echo "######################################################"
 echo ""
 compile
-
-rm -rf tmp
 
 echo ""
 echo "######################################################"
