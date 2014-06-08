@@ -29,8 +29,8 @@ fi
 
 compile()
 {
-	sudo cp /usr/local/share/aclocal/guile.m4 m4/
 	libtoolize
+	sudo cp /usr/local/share/aclocal/guile.m4 m4/
 	gettextize -f
 	autoreconf -vfi
 	intltoolize --force
